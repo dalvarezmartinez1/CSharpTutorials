@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Configuration;
-
 
 namespace JobLogger
 {
     internal class DatabaseLogger : ILogger
     {
         private static readonly string CONN_STRING;
-
         private static readonly Model model;
 
         static DatabaseLogger()

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JobLogger
 {
@@ -10,11 +6,11 @@ namespace JobLogger
     {
         private static readonly string MSG_FORMAT = "{0}  {1}  {2}";
 
-        public LogLevel LogLevel { get; set; }
-        public string DateString { get; set; }
-        public string Message { get; set; }
+        internal LogLevel LogLevel { get; set; }
+        internal string DateString { get; set; }
+        internal string Message { get; set; }
 
-        public LogItem(LogLevel logLevel, String dateString, String message)
+        internal LogItem(LogLevel logLevel, String dateString, String message)
         {
             LogLevel = logLevel;
             DateString = dateString;

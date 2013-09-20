@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
 
@@ -14,12 +10,12 @@ namespace JobLogger
 
         private SqlConnection connection;
 
-        public Model(String connString)
+        internal Model(String connString)
         {
             connection = new SqlConnection(connString);
         }
 
-        public void insert(LogItem logItem)
+        internal void insert(LogItem logItem)
         {
             if (connection != null)
             {

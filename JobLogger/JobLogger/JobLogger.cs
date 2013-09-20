@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
-using System.Data.SqlClient;
-using System.Configuration;
-using System.Collections.Generic;
 namespace JobLogger
 {
     public class JobLogger
@@ -13,7 +8,7 @@ namespace JobLogger
         public LogLevel LogLevel { get; set; }
         private ILogger[] loggers;
 
-        public JobLogger( LogLevel logLevel, params LogDestination[] logDestinations)
+        public JobLogger(LogLevel logLevel, params LogDestination[] logDestinations)
         {
             LogLevel = logLevel;
             loggers = LoggerFactory.getLoggers(logDestinations);
@@ -35,7 +30,7 @@ namespace JobLogger
         {
             return logLevel.VAL >= LogLevel.VAL;
         }
-
+        
         public static void Main(String[] args)
         {
             JobLogger jobLogger = new JobLogger(LogLevel.ERROR, LogDestination.DATABASE, LogDestination.FILE, LogDestination.CONSOLE);
@@ -48,19 +43,26 @@ namespace JobLogger
         
     }
 
-    // Better than enum, order of declaration does not matter here
+    /* Better than enum, order of declaration does not matter here.
+     We can argue, whether is good to include the color here, if it's only used by the ConsoleLogger.
+     This decision was made to maintain the SingleResponsibilityPrinciple. If we didn't include the color here, we would
+     have to modify this class here, to include the new LogLevel,and also the ConsoleLogger class to map the loglevel
+     to a specific color */
     public class LogLevel
     {
-        public int VAL { get; private set; }
-        public string NAME { get; private set; }
+        internal int VAL { get; private set; }
+        internal string NAME { get; private set; }
+        internal ConsoleColor Color { get; private set; }
 
-        private LogLevel(int val, string name) {
+        private LogLevel(int val, string name, ConsoleColor color)
+        {
             VAL = val;
             NAME = name;
+            Color = color;
         }
 
-        public static readonly LogLevel INFO = new LogLevel(1, "INFO");
-        public static readonly LogLevel WARNING = new LogLevel(2, "WARNING");
-        public static readonly LogLevel ERROR = new LogLevel(3, "ERROR");
+        public static readonly LogLevel INFO = new LogLevel(1, "INFO", ConsoleColor.Green);
+        public static readonly LogLevel WARNING = new LogLevel(2, "WARNING", ConsoleColor.Yellow);
+        public static readonly LogLevel ERROR = new LogLevel(3, "ERROR", ConsoleColor.Red);
     }
 }
