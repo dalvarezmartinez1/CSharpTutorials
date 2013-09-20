@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace JobLogger
 {
@@ -19,7 +20,10 @@ namespace JobLogger
 
         public override string ToString()
         {
-            return String.Format(MSG_FORMAT, LogLevel.NAME, DateString, Message);
+            string strLogLevel = (LogLevel == null) ? "" : LogLevel.NAME;
+            string strDateString = (DateString == null) ? "" : DateString;
+            string strMessage = (Message == null) ? "" : Message;
+            return String.Format(MSG_FORMAT, strLogLevel, strDateString, strMessage);
         }
     }
 }

@@ -32,6 +32,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>lib\nunit2.6.2\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.mocks">
+      <HintPath>lib\nunit2.6.2\nunit.mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="pnunit.framework">
+      <HintPath>lib\nunit2.6.2\pnunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -51,9 +60,21 @@
     <Compile Include="JobLogger.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="tests\ConsoleLoggerTest.cs" />
+    <Compile Include="tests\DatabaseLoggerTest.cs" />
+    <Compile Include="tests\FileLoggerTest.cs" />
+    <Compile Include="tests\JobLoggerTest.cs" />
+    <Compile Include="tests\LoggerFactoryTest.cs" />
+    <Compile Include="tests\LogItemTest.cs" />
+    <Compile Include="tests\ModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lib\nunit2.6.2\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

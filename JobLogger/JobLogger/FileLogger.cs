@@ -6,36 +6,41 @@ namespace JobLogger
 {
     internal class FileLogger : ILogger
     {
-        private static readonly string LOG_DIR = ConfigurationManager.AppSettings["LogFileDirectory"];
-        // We will be able to create 1 different file every second, I assume desired behavior
-        private static readonly string DATE_FORMAT = "yyyyMMdd-HHmmss";
-        // We will create only 1 file per every instantiation of this class. I assume desired behavior
-        private readonly string FILE_PATH = LOG_DIR + "\\LogFile" + DateTime.Now.ToString(DATE_FORMAT) + ".txt";
+        private readonly string FILE_PATH ;
 
-        public void Log(LogItem logItem)
+        internal FileLogger(string filePath)
         {
+            FILE_PATH = filePath;
+        }
 
-            if (File.Exists(FILE_PATH))
+        public bool Log(LogItem logItem)
+        {
+            bool ret = false;
+            if (logItem != null && !String.IsNullOrEmpty(FILE_PATH))
             {
-                writeToFile(File.AppendText(FILE_PATH), logItem);
-            }
-            else
-            {
-                FileStream fs = createFile(FILE_PATH);
-                if (fs != null)
+                if (File.Exists(FILE_PATH))
                 {
-                    writeToFile(new StreamWriter(fs), logItem);
+                    ret = writeToFile(File.AppendText(FILE_PATH), logItem);
+                }
+                else
+                {
+                    FileStream fs = createFile();
+                    if (fs != null)
+                    {
+                        ret = writeToFile(new StreamWriter(fs), logItem);
+                    }
                 }
             }
+            return ret;
         }
 
         // Creates a file and returns its FileStream, in case we want to read or write to it.
-        private FileStream createFile(string FILE_PATH)
+        private FileStream createFile()
         {
             FileStream fs = null;
             try
             {
-                Directory.CreateDirectory(LOG_DIR);
+                Directory.CreateDirectory(Path.GetDirectoryName(FILE_PATH));
                 fs = File.Create(FILE_PATH);
             }
             catch (Exception e)
@@ -46,8 +51,9 @@ namespace JobLogger
         }
 
         // Writes to a specific file, the desired message from the logItem
-        private void writeToFile(StreamWriter sw, LogItem logItem)
+        private bool writeToFile(StreamWriter sw, LogItem logItem)
         {
+            bool ret = false;
             if (sw != null)
             {
                 try
@@ -55,6 +61,7 @@ namespace JobLogger
                     if (logItem != null)
                     {
                         sw.WriteLine(logItem.ToString());
+                        ret = true;
                     }
                 }
                 catch (Exception e)
@@ -66,6 +73,7 @@ namespace JobLogger
                     sw.Close();
                 }
             }
+            return ret;
         }
     }
 }

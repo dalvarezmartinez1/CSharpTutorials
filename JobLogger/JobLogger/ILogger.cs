@@ -5,6 +5,6 @@ namespace JobLogger
     between the high level class JobLogger and the different low level classes that implement this interface.*/
     interface ILogger
     {
-        void Log(LogItem logItem);
+        bool Log(LogItem logItem);
     }
 }

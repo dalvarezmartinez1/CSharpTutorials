@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
 
@@ -12,12 +16,20 @@ namespace JobLogger
 
         internal Model(String connString)
         {
-            connection = new SqlConnection(connString);
+            try
+            {
+                connection = new SqlConnection(connString);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error creating the model!" + e.Message);
+            }
         }
 
-        internal void insert(LogItem logItem)
+        internal bool Insert(LogItem logItem)
         {
-            if (connection != null)
+            bool ret = false;
+            if (connection != null && logItem != null)
             {
                 using (SqlCommand command = new SqlCommand(INSERT_QUERY, connection))
                 {
@@ -27,7 +39,10 @@ namespace JobLogger
                     try
                     {
                         connection.Open();
-                        command.ExecuteNonQuery();
+                        if (command.ExecuteNonQuery() == 1)
+                        {
+                            ret = true;
+                        }
                     }
                     catch (Exception e)
                     {
@@ -46,6 +61,7 @@ namespace JobLogger
                     }
                 }
             }
+            return ret;
         }
     }
 }

@@ -2,32 +2,46 @@
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
+using System.Configuration;
 namespace JobLogger
 {
-
     internal class LoggerFactory
     {
+        private static readonly string FILE_LOG_DIR = ConfigurationManager.AppSettings["LogFileDirectory"];
+        // We will be able to create 1 different file every second, I assume desired behavior
+        private static readonly string FILE_DATE_FORMAT = "yyyyMMdd-HHmmss";
+
         // If you want to add another Logger, just add another case.
-        internal static ILogger[] getLoggers(LogDestination[] logDestination)
+        internal static ILogger[] getLoggers(params LogDestination[] logDestinations)
         {
-            ILogger[] loggers = new ILogger[logDestination.Length];
-            for (int i = 0; i < logDestination.Length; i++)
+            ILogger[] loggers;
+            if (logDestinations != null)
             {
-                switch (logDestination[i])
+                LogDestination[] distinctLogDest = logDestinations.Distinct().ToArray();
+                loggers = new ILogger[distinctLogDest.Length];
+                for (int i = 0; i < distinctLogDest.Length; i++)
                 {
-                    case LogDestination.CONSOLE:
-                        loggers[i] = new ConsoleLogger();
-                        break;
-                    case LogDestination.FILE:
-                        loggers[i] = new FileLogger();
-                        break;
-                    case LogDestination.DATABASE:
-                        loggers[i] = new DatabaseLogger();
-                        break;
-                    default:
-                        Console.WriteLine("Logger not supported " + logDestination[i]);
-                        break;
+                    switch (distinctLogDest[i])
+                    {
+                        case LogDestination.CONSOLE:
+                            loggers[i] = new ConsoleLogger();
+                            break;
+                        case LogDestination.FILE:
+                            string filePath = FILE_LOG_DIR + "\\LogFile" + DateTime.Now.ToString(FILE_DATE_FORMAT) + ".txt";
+                            loggers[i] = new FileLogger(filePath);
+                            break;
+                        case LogDestination.DATABASE:
+                            loggers[i] = new DatabaseLogger(new Model(ConfigurationManager.AppSettings["ConnectionString"]));
+                            break;
+                        default:
+                            Console.WriteLine("Logger not supported " + distinctLogDest[i]);
+                            break;
+                    }
                 }
+            }
+            else
+            {
+                loggers = new ILogger[0];
             }
             return loggers;
         }

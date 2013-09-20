@@ -5,29 +5,21 @@ namespace JobLogger
 {
     internal class DatabaseLogger : ILogger
     {
-        private static readonly string CONN_STRING;
-        private static readonly Model model;
+        private readonly Model model;
 
-        static DatabaseLogger()
+        internal DatabaseLogger(Model model)
         {
-            try
-            {
-                CONN_STRING = ConfigurationManager.AppSettings["ConnectionString"];
-                model = new Model(CONN_STRING);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(String.Format("Error {0} while creating the db model. You will not be able to log to database!"
-                    , e.Message));
-            }
+            this.model = model;
         }
 
-        public void Log(LogItem logItem)
+        public bool Log(LogItem logItem)
         {
-            if (model != null)
+            bool ret = false;
+            if (model != null && logItem != null)
             {
-                model.insert(logItem);
+                ret = model.Insert(logItem);
             }
+            return ret;
         }
     }
 }

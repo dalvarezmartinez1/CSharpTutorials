@@ -1,34 +1,59 @@
 ﻿using System;
 namespace JobLogger
 {
-    public class JobLogger
+    public sealed class JobLogger
     {
         private static readonly string DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
-        public LogLevel LogLevel { get; set; }
+        private LogLevel logLevel;
         private ILogger[] loggers;
 
         public JobLogger(LogLevel logLevel, params LogDestination[] logDestinations)
         {
-            LogLevel = logLevel;
+            this.logLevel = logLevel;
             loggers = LoggerFactory.getLoggers(logDestinations);
         }
 
-        public void LogMessage(LogLevel logLevel, string message)
+        public bool LogMessage(LogLevel logLevel, string message)
         {
-            if (isAllowed(logLevel))
+            bool ret = false;
+            if (logLevel != null && message != null)
             {
-                LogItem logItem = new LogItem(logLevel, DateTime.Now.ToString(DATE_FORMAT), message);
-                for (int i = 0; i < loggers.Length; i++)
+                if (isAllowed(logLevel))
                 {
-                    loggers[i].Log(logItem);
+                    LogItem logItem = new LogItem(logLevel, DateTime.Now.ToString(DATE_FORMAT), message);
+                    for (int i = 0; i < loggers.Length; i++)
+                    {
+                        ret = loggers[i].Log(logItem);
+                    }
                 }
             }
+            return ret;
         }
 
         private bool isAllowed(LogLevel logLevel)
         {
-            return logLevel.VAL >= LogLevel.VAL;
+            bool ret = false;
+            if (logLevel != null)
+            {
+                ret = logLevel.VAL >= this.logLevel.VAL;
+            }
+            return ret;
+        }
+
+        public LogLevel getLogLevel() {
+            return logLevel;
+        }
+
+        public bool setLogLevel(LogLevel logLevel)
+        {
+            bool ret = false;
+            if (logLevel != null)
+            {
+                this.logLevel = logLevel;
+                ret = true;
+            }
+            return ret;
         }
         
         public static void Main(String[] args)

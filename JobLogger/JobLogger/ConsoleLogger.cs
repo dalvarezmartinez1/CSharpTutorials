@@ -4,10 +4,23 @@ namespace JobLogger
 {
     internal class ConsoleLogger : ILogger
     {
-        public void Log(LogItem logItem)
+        public bool Log(LogItem logItem)
         {
-            Console.ForegroundColor = logItem.LogLevel.Color;
-            System.Console.WriteLine(logItem.ToString());
+            bool ret = false;
+            if (logItem != null)
+            {
+                Console.ForegroundColor = logItem.LogLevel.Color;
+                try
+                {
+                    System.Console.WriteLine(logItem.ToString());
+                    ret = true;
+                }
+                catch (ArgumentNullException e)
+                { // We should handle exceptions better, but right now I can't think of anything
+                    Console.WriteLine(String.Format("Error {0} while logging {1}", e.ToString(), logItem.ToString()));
+                }
+            }
+            return ret;
         }
     }
 }
